@@ -12,24 +12,37 @@ options(width = 200)
 # ignoring "Admit" and Awaiting Materials"
 submitted = z[z$"Current Workflow Bin" == "Faculty Members",]
 dim(submitted)
-
-submitted$urls = sapply(submitted$data.id, function(id) try(getApplicantInfo(id, con)))
-
-table(grepl("https", submitted$urls))
-err = sapply(files, is, 'try-error')
-
-table(err)
-
-if(!file.exists("PDFs"))
-    dir.create("PDFs")
-
-# Download the application packets.
-files = mapply(function(u, out) try(getPDF(u, con, out)),  submitted$urls, file.path("PDFs", paste0(trimws(submitted$Name), ".pdf")))
 ```
 
 
+### Download Student Packets
+
+We'll store them in a directory named PDFs
+```r
+if(!file.exists("PDFs"))
+    dir.create("PDFs")
+```
+
+We can do this directly with 
+```r
+files = mapply(function(u, out) try(getPDF(u, con, out)),  submitted$data.id, file.path("PDFs", paste0(trimws(submitted$Name), ".pdf")))
+```
+
+<!--
+The less direct way  is to get the URL from the id and then download it:
+```r
+submitted$urls = sapply(submitted$data.id, function(id) try(getApplicantInfo(id, con)))
+files = mapply(function(u, out) try(getPDF(u, con, out)),  submitted$urls, file.path("PDFs", paste0(trimws(submitted$Name), ".pdf")))
+```
+-->
+
+## Get All Applicants
+
 `allApplicants()` queries all applicants
 
+
+
+## Applicants by Program and Degree
 
 `byProgramDegree()` allows us to query one or more programs and one or more degree objectives
 ```r
