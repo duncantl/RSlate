@@ -19,7 +19,7 @@ getPDF =
 function(url, con = getConnection(), out = sprintf("%s.pdf", id), id = getFormParams(url)["id"])
 {
     if(!grepl("^http", url)) {
-        if(!grepl("^[-0-9-f]+$", url))
+        if(!grepl("^[-0-9a-f]+$", url))
             stop("Neither a URL or an applicant data.id")
 
         url = getApplicantInfo(url, con)
@@ -147,11 +147,10 @@ function(program, degree, ...)
            `filter_e882181c-a259-4154-bab0-60a33fbe435e_operator` = "IN" 
 #           `filter_e882181c-a259-4154-bab0-60a33fbe435e_operand` = "1955aef8-b272-4a87-bb6b-cb41a89c1768%7CM.S."
            )
-#XXX    params[rep( "filter_e882181c-a259-4154-bab0-60a33fbe435e_operand", length(deg)) ] = deg
     params = c(params, structure(deg, names = rep( "filter_e882181c-a259-4154-bab0-60a33fbe435e_operand", length(deg))))
     params = c(params, structure(prog, names = rep( "filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operand", length(prog))))
 
-   allApplicants(params  = params, ...)
+    allApplicants(params  = params, ...)
 }
 
 
