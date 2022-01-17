@@ -96,7 +96,8 @@ function(...)
            `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_pinned` = "0", `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operandName` = "", 
            `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operator` = "IN", 
            `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operand` = "ae0a5c9a-b272-4c55-989a-bae55a435926%7CStatistics", 
-           `filter_e882181c-a259-4154-bab0-60a33fbe435e_active` = "1", `filter_e882181c-a259-4154-bab0-60a33fbe435e_type` = "filter", 
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_active` = "1",
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_type` = "filter", 
            `filter_e882181c-a259-4154-bab0-60a33fbe435e_name` = "Degree+Objective", 
            `filter_e882181c-a259-4154-bab0-60a33fbe435e_id` = "4bf6957a-a18a-48c2-81b1-1a10c62ad677", 
            `filter_e882181c-a259-4154-bab0-60a33fbe435e_source_type` = "local", 
@@ -106,6 +107,53 @@ function(...)
 
    allApplicants(params  = params, ...)
 }
+
+
+byProgramDegree =
+function(program, degree, ...)    
+{
+
+    program = unique(program)
+    degree = unique(degree)
+
+    prog = programIds[ pmatch(program, names(programIds)) ]
+    deg = degreeObjectives[ pmatch(degree, names(degreeObjectives)) ]
+
+    if(any(is.na(prog)))
+        stop("didn't find program(s) named ", paste(program[is.na(prog)], collapse = ", "))
+
+    if(any(is.na(deg)))
+        stop("didn't find degree objective(s) named ", paste(degree[is.na(deg)], collapse = ", "))    
+    
+   params = c(filter_search_type = "filter", 
+           filter_search_id = "fd4bdac3-2711-4cce-a4de-203c90513425", filter_search_operator = "CONTAINS", 
+           filter_search_operand = "", filter_bin_type = "filter", filter_bin_id = "1ba9c718-0c8e-4544-b0ba-b00e4c7bdc2b", 
+           filter_bin_operator = "IN", filter_bin_operand = "", 
+           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_active` = "1", `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_type` = "filter", 
+           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_name` = "Graduate+Program", 
+           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_id` = "e0960eab-3137-4533-a8a7-066497dbb470", 
+           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_source_type` = "local", 
+           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_pinned` = "0",
+           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operandName` = "", 
+           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operator` = "IN", 
+#           `filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operand` = "ae0a5c9a-b272-4c55-989a-bae55a435926%7CStatistics", 
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_active` = "1",
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_type` = "filter", 
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_name` = "Degree+Objective", 
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_id` = "4bf6957a-a18a-48c2-81b1-1a10c62ad677", 
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_source_type` = "local", 
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_pinned` = "0",
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_operandName` = "", 
+           `filter_e882181c-a259-4154-bab0-60a33fbe435e_operator` = "IN" 
+#           `filter_e882181c-a259-4154-bab0-60a33fbe435e_operand` = "1955aef8-b272-4a87-bb6b-cb41a89c1768%7CM.S."
+           )
+#XXX    params[rep( "filter_e882181c-a259-4154-bab0-60a33fbe435e_operand", length(deg)) ] = deg
+    params = c(params, structure(deg, names = rep( "filter_e882181c-a259-4154-bab0-60a33fbe435e_operand", length(deg))))
+    params = c(params, structure(prog, names = rep( "filter_46da58c3-021b-4aa6-9505-e6bba938fb17_operand", length(prog))))
+
+   allApplicants(params  = params, ...)
+}
+
 
 
 # We put the value of the base and preset form parameters in R options and not in the code
