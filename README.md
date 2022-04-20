@@ -7,9 +7,11 @@ specify the cookie directly. You can also get it with the RBrowserCookies packag
 ```r
 con = getConnection()
 z  = statMSApps(con = con)
-options(width = 200)
+z  = byProgramDegree("Statistics", "M.S.")
+```
 
-# ignoring "Admit" and Awaiting Materials"
+We'll focus on the fully submitted applications, ignoring "Admit" and Awaiting Materials":
+```r
 submitted = z[z$"Current Workflow Bin" == "Faculty Members",]
 dim(submitted)
 ```
