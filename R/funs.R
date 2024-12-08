@@ -3,6 +3,15 @@ function()
     paste0(as.integer(Sys.time()), "000")
 
 
+getIDPDF =
+function(id, con, out)
+{
+    u = getApplicantInfo(id, con)
+    getPDF(u, con, out)
+}
+
+
+
 getApplicantInfo =
     #
     # given an applicant's id, get the link to the PDF
@@ -12,7 +21,10 @@ function(id, con = getConnection(), base = getSlateBase(), baseURL = "https://ap
     rw = getForm(baseURL, cmd = "lookup", id = id, base = base, "_" = nonce(), binary = TRUE, curl = con)
     doc = htmlParse(rawToChar(rw))
     links = getHTMLLinks(doc, baseURL = baseURL, relative = TRUE)
-    links["Download PDF"]
+    if("Download PDF" %in% names(links))
+        links["Download PDF"]
+    else
+        links[length(links)]
 }
 
 getPDF =
