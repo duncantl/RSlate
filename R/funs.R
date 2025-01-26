@@ -81,7 +81,8 @@ function(limit = 3000L, offset = 0L,
     tbl = getNodeSet(doc, "//table")[[1]]
     ans = readHTMLTable(tbl)
     ans$data.id = xpathSApply(doc, "//tbody/tr", xmlGetAttr, "data-id", NA)
-    ans$name = xpathSApply(doc, "//tbody/tr/td/div[@class = 'name']", xmlValue)
+    ans$Name = xpathSApply(doc, "//tbody/tr/td/div[@class = 'name']", xmlValue)
+    ans$readers = xpathSApply(doc, "//tbody/tr/td/div[@class = 'data']", xmlValue, trim = TRUE)    
     
     ans$gpa = as.numeric(ans$"Verified UG GPA")
     ans$grad.gpa = as.numeric(ans$"Verified Grad GPA")
