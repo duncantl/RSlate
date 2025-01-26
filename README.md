@@ -27,7 +27,7 @@ if(!file.exists("PDFs"))
 
 We can do this directly with 
 ```r
-files = mapply(function(u, out) try(getPDF(u, con, out)),  submitted$data.id, file.path("PDFs", paste0(trimws(submitted$Name), ".pdf")))
+files = mapply(function(u, out) try(getPDF(u, con, out)),  submitted$data.id, file.path("PDFs", paste0(trimws(submitted$Name), ".pdf")), SIMPLIFY = FALSE)
 ```
 
 <!--
