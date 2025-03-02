@@ -20,34 +20,13 @@ if(FALSE) {
     o[[1]]$id
 }
 
-if(FALSE){
-    d = readxl(mostRecent("2024 Envision_FINAL_Attendees.xlsx"))
-    d$Name = paste(d$Last, d$First, sep = ", ")
-    
-    ids = lapply(d$Name, lookup, con = con)
-    table(ni <- sapply(ids, function(x) length(x)))
 
-    # where ni is 0, use just the last name and , and see what we get.
-
-    ids[ni == 0] = lapply(paste0(d$Last[ni == 0], ","), lookup, con = con)    
-
-    table(ni <- sapply(ids, function(x) length(x)))
-
-    w = ni > 1
-    ids[w] = mapply(matchName, d$First[w], ids[w], SIMPLIFY = FALSE)
-
-    table(ni <- sapply(ids, function(x) length(x)))
-
-    w = ni > 1
-    ids[w] = lapply(ids[w], pickByEnvision, con)
-
-    table(sapply(ids, length))
-
-    stopifnot(all(sapply(ids, length) == 1))
-
-    # Some people applied to 2 or more programs.
-    
-    d$slateId = sapply(ids, getField, "id")
+submittedApplications =
+function(x)
+{
+    w = !is.na(x$"datatab") & x$"datatab" ==  "Application" &
+          grepl("2025-26", x$title) & !grepl("Awaiting Submission", x$name)
+    x[w, ]
 }
 
 matchName =
@@ -76,6 +55,12 @@ function(item, con = getConnection())
     item
 }
 
+programApplications =
+function(x)    
+{
+    x = gsub("^[0-9]{4}-[0-9]{2} ", "", x)
+    c(prog = gsub(", [^,]+", "", x), deg = gsub(".*, ", "", x))
+}
 
 isEnvision =
 function(id, con = getConnection())    
@@ -89,17 +74,62 @@ getTabs =
 function(id, doc = getPageById(id, con), con = getConnection())    
 {
     li = getNodeSet(doc, "//ul[@class = 'tabs']//li/a")
-    ats = c("data-tab", "title", "id", "data-url", "data-href", "data-id")
+    ats = c("data-tab", "title", "id", "data-url", "data-href", "data-id", "data-div")
     df = as.data.frame(lapply(ats, function(at) sapply(li, xmlGetAttr, at, NA)))
-    names(df) = ats
+    names(df) = gsub("-", "", ats)
     df$name = sapply(li, xmlValue)
     df[, c(ncol(df), 1:(ncol(df) - 1))]
+}
+
+getDecisions =
+function(tab, apps = submittedApplications(tab), con = getConnection())
+{
+    lapply(apps$dataid, getDecision, con = con)
+}
+
+
+getDecision =
+function(id, app, con = getConnection(), v2 = FALSE)    
+{
+    u = paste0(SlateURL, "/manage/lookup/application")
+    doc = htmlParse(getForm(u, id = id, curl = con))
+
+#  if(v2) {
+#      ans = xpathSApply(doc, "//div[@class = 'dashboard']/div/div/text()", xmlValue)[[1]]
+#      if(length(ans) == 0 || ans == "")
+#          browser()
+#      return(ans)
+#  }
+    
+
+    tbl = getNodeSet(doc, sprintf("//div[@id = 'part_%s_decision']//table", id))
+
+    if(length(tbl) == 0) {
+        browser()
+        return(NA)
+    }
+
+    ans = unique(xpathSApply(tbl[[1]], ".//tr/td[position() = 2]/div/text()", xmlValue))
+    if(length(ans) == 0)
+        # "Awaiting program decision"
+        xpathSApply(doc, "//div[@class = 'dashboard']/div/div/text()", xmlValue)[[1]]
+    else
+        ans
+}
+
+SlateURL = "https://apply.grad.ucdavis.edu"
+RecordURL = "https://apply.grad.ucdavis.edu/manage/lookup/record"
+
+slate =
+function(id)    
+{
+    browseURL(paste0(RecordURL, "?id=", id))
 }
 
 getPageById =
 function(id, con = getConnection())
 {
-    url = "https://apply.grad.ucdavis.edu/manage/lookup/record"
+    url = RecordURL
      # 9ee3e0ca-0f48-444a-9b87-3a006592b411
     htmlParse(getForm(url, id = id, curl = con))
 }
@@ -116,9 +146,10 @@ function(x)
 }
 
 
-
-
 getField =
+    # from lookup, we get a list of results.
+    # Each of this is a character vector with fields id, data, name, col
+    # So we loop over the results (x) and retreive field from each.
 function(x, field = "name")
 {
     ans = sapply( x, function(x) x[field])
@@ -126,12 +157,11 @@ function(x, field = "name")
            name =  gsub("</?b>", "", ans),
            data = gsub("<br />", " ", ans),
            ans)
-    
-
 }
 
 
 initial =
+    # Get a person's first name initial. e.g., Duncan to D
 function(n)
 {
    substring(trimws(sapply(strsplit(n, ", ?"), `[`, 2)), 1, 1)
