@@ -1,8 +1,8 @@
 submittedApplications =
-function(x)
+function(x, year = NA)
 {
     w = !is.na(x$"datatab") & x$"datatab" ==  "Application" &
-          grepl("2025-26", x$title) & !grepl("Awaiting Submission", x$name)
+          (is.na(year) | grepl(year, x$title)) & !grepl("Awaiting Submission", x$name)
     x[w, ]
 }
 
