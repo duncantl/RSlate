@@ -5,4 +5,6 @@ Author: Duncan Temple Lang
 Maintainer: Duncan Temple Lang <dtemplelang@ucdavis.edu>
 Description: Get the table of applicants and the PDF packet for a given applicant.
 License: BSD
-Imports: XML, RCurl, RJSONIO
+Imports: XML, RCurl, RJSONIO, utils
+Suggests: Gradhub
+
