@@ -10,3 +10,26 @@ export(byProgramDegree)
 export(degreeObjectives, programIds)
 
 export(getQueue)
+
+
+export(
+    lookup,
+    matchName,
+    getField
+)
+
+export(
+    getProfile,
+    getPriorEd,
+    submittedApplications,
+    programApplications,
+    getDecisions,
+    getPageById,
+    getTabs
+    )
+
+export(slate)
+
+export(
+    pickByEnvision
+)
