@@ -38,7 +38,7 @@ function(url, con = getConnection(), out = sprintf("%s.pdf", id), id = getFormPa
     }
     
     content = getURLContent(url, curl = con, binary = TRUE)
-    if(length(out) && length(content)) {
+    if(length(out) && !is.na(out) && length(content)) {
         Gradhub::savePDF(content, out)
         out
     } else
@@ -46,8 +46,20 @@ function(url, con = getConnection(), out = sprintf("%s.pdf", id), id = getFormPa
 }
 
 getConnection =
-function(cooky = cookie("slate.cookie"), ...)
-   getCurlHandle(cookie = cooky, followlocation = TRUE, cookiejar = '', ...)
+function(cooky = NA, ...)
+{
+    if(is.na(cooky)) {
+        ff = c("~/slate.cookie", "slate.cookie")
+        ex = file.exists(ff)
+        if(!any(ex))
+            stop("No slate.cookie file: ", paste(ff, sep = ", "))
+        ff = ff[ex]
+        ff = ff[which.max(file.info(ff)$mtime)]
+        cooky = readLines(ff, n = 1, warn = FALSE)
+    }
+    
+    getCurlHandle(cookie = cooky, followlocation = TRUE, cookiejar = '', ...)
+}
 
 
 
@@ -131,6 +143,7 @@ function(program, degree, ...)
     degree = unique(degree)
 
     prog = programIds[ pmatch(program, names(programIds)) ]
+    #XXXX where is degreeObjectives defined????
     deg = degreeObjectives[ pmatch(degree, names(degreeObjectives)) ]
 
     if(any(is.na(prog)))
