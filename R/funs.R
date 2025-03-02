@@ -45,7 +45,7 @@ function(url, con = getConnection(), out = sprintf("%s.pdf", id), id = getFormPa
         content
 }
 
-getConnection =
+getConnection = mkSlateCon = 
 function(cooky = NA, ...)
 {
     if(is.na(cooky)) {
