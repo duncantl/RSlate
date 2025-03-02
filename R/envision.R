@@ -1,5 +1,5 @@
 pickByEnvision =
-function(item, con = getConnection())
+function(item, con = getConnection(), year = "2024")
 {
     w = sapply(getField(item, "id"), isEnvision, con)
     if(any(w))
@@ -10,9 +10,9 @@ function(item, con = getConnection())
 
 
 isEnvision =
-function(id, con = getConnection())    
+function(id, con = getConnection(), year = "2024")    
 {
     doc = getPageById(id, con)
-    length(getNodeSet(doc, "//text()[contains(., 'Envision 2024')]")) > 0
+    length(getNodeSet(doc, sprintf("//text()[contains(., 'Envision %s')]", year)) > 0)
 }
 
