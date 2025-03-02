@@ -42,7 +42,7 @@ env24 = sapply(tabs, function(x) "Envision 2024" %in% x$name)
 stopifnot(all(env24))
 
 # now determine the number of applications each had - ranging from 0 to ...  2 in this case.
-d$numApps = sapply(tabs, function(x) nrow(submittedApplications(x)))
+d$numApps = sapply(tabs, function(x) nrow(submittedApplications(x, "2025-26")))
 
 w = d$numApps > 0
 
