@@ -29,14 +29,6 @@ function(id, app, con = getConnection(), v2 = FALSE)
     u = paste0(SlateURL, "/manage/lookup/application")
     doc = htmlParse(getForm(u, id = id, curl = con))
 
-#  if(v2) {
-#      ans = xpathSApply(doc, "//div[@class = 'dashboard']/div/div/text()", xmlValue)[[1]]
-#      if(length(ans) == 0 || ans == "")
-#          browser()
-#      return(ans)
-#  }
-    
-
     tbl = getNodeSet(doc, sprintf("//div[@id = 'part_%s_decision']//table", id))
 
     if(length(tbl) == 0) {
