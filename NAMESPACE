@@ -1,5 +1,6 @@
 import(RCurl)
 import(XML)
+import(RJSONIO)
 
 export(allApplicants, statMSApps)
 # Will change this interface to make more convenient.

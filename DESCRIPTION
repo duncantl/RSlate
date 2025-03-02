@@ -1,8 +1,8 @@
 Title: Query Slate for Admissions Data
 Package: RSlate
-Version: 0.1-0
+Version: 0.2-0
 Author: Duncan Temple Lang
 Maintainer: Duncan Temple Lang <dtemplelang@ucdavis.edu>
 Description: Get the table of applicants and the PDF packet for a given applicant.
 License: BSD
-Imports: XML, RCurl
+Imports: XML, RCurl, RJSONIO
