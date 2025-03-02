@@ -1,4 +1,3 @@
-
 getQueue =
 function(con, url = "https://apply.grad.ucdavis.edu/manage/reader/search?mode=queue")
 {
